@@ -1,1 +1,1 @@
-# Revive Pharmacy Users Management API
+# Revive Pharmacy Logs Management API
