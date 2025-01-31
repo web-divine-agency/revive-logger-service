@@ -17,8 +17,8 @@ var statements = [
   `CREATE TABLE activity_logs (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "user_id BIGINT UNSIGNED NOT NULL",
-    "module VARCHAR(255) NULL",
-    "note TEXT NULL",
+    "module VARCHAR(255) NOT NULL",
+    "note TEXT NOT NULL",
     "created_at TIMESTAMP NULL",
     "created_at_order DOUBLE NULL",
     "updated_at TIMESTAMP NULL",
