@@ -23,13 +23,14 @@ const admin = express.Router();
  */
 app.use("/portal", portal);
 portal.use(authenticated);
+portal.get("/res/logs", LoggerController.list);
+portal.post("/res/logs", LoggerController.create);
 
 /**
  * Admin routes
  */
 app.use("/admin", admin);
 admin.use(authAdmin);
-admin.post("/res/logs", LoggerController.create);
 
 /**
  * Base routes
