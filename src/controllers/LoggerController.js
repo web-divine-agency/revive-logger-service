@@ -23,7 +23,8 @@ export default {
     }
 
     const { show, page } = req.query;
-    let find = req.query.find ?? "";
+    let find = req.query.find || "";
+    let sort_by = req.query.sort_by || "activity_logs.created_at_order";
 
     let query = `
       SELECT
@@ -53,6 +54,7 @@ export default {
           activity_logs.note LIKE "%${find}%" OR
           users.email LIKE "%${find}%"
         )
+      ORDER BY ${sort_by} DESC
     `;
 
     MysqlService.paginate(query, "activity_logs.id", show, page)
