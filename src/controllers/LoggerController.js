@@ -12,8 +12,9 @@ export default {
    */
   list: (req, res) => {
     let validation = Validator.check([
+      Validator.required(req.query, "direction"),
+      Validator.required(req.query, "last"),
       Validator.required(req.query, "show"),
-      Validator.required(req.query, "page"),
     ]);
 
     if (!validation.pass) {
@@ -22,9 +23,10 @@ export default {
       return res.json(message);
     }
 
-    const { show, page } = req.query;
+    const { last, show } = req.query;
+
     let find = req.query.find || "";
-    let sort_by = req.query.sort_by || "activity_logs.created_at_order";
+    let direction = req.query.direction === "next" ? "<" : ">";
 
     let query = `
       SELECT
@@ -46,18 +48,21 @@ export default {
         activity_logs.updated_at_order
       FROM activity_logs
       INNER JOIN users ON activity_logs.user_id = users.id
-      WHERE 
-        (
-          users.first_name LIKE "%${find}%" OR
-          users.last_name LIKE "%${find}%" OR
-          activity_logs.module LIKE "%${find}%" OR
-          activity_logs.note LIKE "%${find}%" OR
-          users.email LIKE "%${find}%"
-        )
-      ORDER BY ${sort_by} DESC
+      WHERE activity_logs.deleted_at IS NULL
+      AND
+      (
+        users.first_name LIKE "%${find}%" OR
+        users.last_name LIKE "%${find}%" OR
+        activity_logs.module LIKE "%${find}%" OR
+        activity_logs.note LIKE "%${find}%" OR
+        users.email LIKE "%${find}%"
+      )
+      AND activity_logs.created_at_order ${direction} ${last}
+      ORDER BY activity_logs.created_at_order DESC
+      LIMIT ${show}
     `;
 
-    MysqlService.paginate(query, "activity_logs.id", show, page)
+    MysqlService.select(query)
       .then((response) => {
         let message = Logger.message(req, res, 200, "activity_logs", response);
         Logger.out([JSON.stringify(message)]);
