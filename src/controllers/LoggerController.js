@@ -1,7 +1,7 @@
 import Logger from "../util/logger.js";
 import Validator from "../util/validator.js";
 
-import MysqlService from "../services/MysqlService.js";
+import DatabaseService from "../services/DatabaseService.js";
 
 export default {
   /**
@@ -11,14 +11,16 @@ export default {
    * @returns
    */
   list: (req, res) => {
-    let validation = Validator.check([
+    let message, validation;
+
+    validation = Validator.check([
       Validator.required(req.query, "direction"),
       Validator.required(req.query, "last"),
       Validator.required(req.query, "show"),
     ]);
 
     if (!validation.pass) {
-      let message = Logger.message(req, res, 422, "error", validation.result);
+      message = Logger.message(req, res, 422, "error", validation.result);
       Logger.error([JSON.stringify(message)]);
       return res.json(message);
     }
@@ -82,23 +84,28 @@ export default {
    * @returns
    */
   create: async (req, res) => {
-    let validation = Validator.check([
+    let message, validation;
+
+    validation = Validator.check([
       Validator.required(req.body, "user_id"),
       Validator.required(req.body, "module"),
       Validator.required(req.body, "note"),
     ]);
 
     if (!validation.pass) {
-      let message = Logger.message(req, res, 422, "error", validation.result);
+      message = Logger.message(req, res, 422, "error", validation.result);
       Logger.error([JSON.stringify(message)]);
       return res.json(message);
     }
 
     const { user_id, module, note } = req.body;
 
-    MysqlService.create("activity_logs", { user_id: user_id, module: module, note: note })
+    DatabaseService.create({
+      table: "activity_logs",
+      data: { user_id: user_id, module: module, note: note },
+    })
       .then((response) => {
-        let message = Logger.message(req, res, 200, "activity_log", response.insertId);
+        let message = Logger.message(req, res, 200, "activity_log", response.data.result.insertId);
         Logger.out([JSON.stringify(message)]);
         return res.json(message);
       })
