@@ -11,6 +11,6 @@ RUN rm -rf node_modules \
 
 COPY . .
 
-EXPOSE 8804 4404
+EXPOSE 8805 4405
 
 CMD ["npm", "start"]

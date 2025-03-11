@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "04-LoggerService",
+      name: "ReviveLoggerService",
       namespace: "revive-logger-service",
       script: "./src/index.js",
       watch: ["./src", "./src/*.js"],

@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 
 import { app } from "./Server.js";
 
-import { authAdmin, authenticated } from "./middleware/auth.js";
+import { authAdmin } from "./middleware/auth.js";
 
 import Controller from "./controllers/Controller.js";
 import LoggerController from "./controllers/LoggerController.js";
@@ -22,9 +22,9 @@ const admin = express.Router();
  * Portal routes
  */
 app.use("/portal", portal);
-portal.use(authenticated);
-portal.get("/res/logs", LoggerController.list);
-portal.post("/res/logs", LoggerController.create);
+// portal.use(authenticated);
+portal.get("/logs", LoggerController.list);
+portal.post("/logs", LoggerController.create);
 
 /**
  * Admin routes
