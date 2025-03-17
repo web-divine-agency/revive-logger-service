@@ -11,7 +11,7 @@ export default {
    * @returns
    */
   list: (req, res) => {
-    let message, validation;
+    let message, validation, find, direction, query;
 
     validation = Validator.check([
       Validator.required(req.query, "direction"),
@@ -27,10 +27,10 @@ export default {
 
     const { last, show } = req.query;
 
-    let find = req.query.find || "";
-    let direction = req.query.direction === "next" ? "<" : ">";
+    find = req.query.find || "";
+    direction = req.query.direction === "next" ? "<" : ">";
 
-    let query = `
+    query = `
       SELECT
         activity_logs.id AS logs_id,
         users.id AS user_id,
@@ -64,14 +64,14 @@ export default {
       LIMIT ${show}
     `;
 
-    MysqlService.select(query)
+    DatabaseService.select({ query })
       .then((response) => {
-        let message = Logger.message(req, res, 200, "activity_logs", response);
+        message = Logger.message(req, res, 200, "activity_logs", response.data.result);
         Logger.out([JSON.stringify(message)]);
         return res.json(message);
       })
       .catch((error) => {
-        let message = Logger.message(req, res, 200, "error", error);
+        message = Logger.message(req, res, 500, "error", error.stack);
         Logger.error([JSON.stringify(message)]);
         return res.json(message);
       });
